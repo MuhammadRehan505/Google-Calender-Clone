@@ -55,7 +55,7 @@ export function OverflowContainer<T>({
 
   return (
     <>
-      <div className={className}>
+      <div ref={containerRef} className={className}>
         {items.map((item) => (
           <div data-item key={getKey(item)}>
             {renderItem(item)}
