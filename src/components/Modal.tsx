@@ -16,7 +16,7 @@ export type ModalProps = {
 
 export function Modal({ children, isOpen, onClose }: ModalProps) {
   const [isClosing, setIsClosing] = useState(false);
-  const prevIsOpen = useRef<boolean>();
+  const prevIsOpen = useRef<boolean | undefined>(undefined);
   useEffect(() => {
     function handler(e: KeyboardEvent) {
       if (e.key === "Escape") onClose();

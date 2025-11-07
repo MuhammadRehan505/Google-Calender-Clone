@@ -25,10 +25,12 @@ export function OverflowContainer<T>({
   const [overflowAmount, setOverflowAmount] = useState(0);
 
   useLayoutEffect(() => {
-    if (containerRef.current == null) return;
+    if (!containerRef.current) return;
+
     const observer = new ResizeObserver((entries) => {
-      const containerElement = entries[0]?.target;
-      if (containerElement == null) return;
+      const containerElement = entries[0]?.target as HTMLElement;
+      if (!containerElement) return;
+
       const children =
         containerElement.querySelectorAll<HTMLElement>("[data-item]");
       const overflowElement =
@@ -36,20 +38,26 @@ export function OverflowContainer<T>({
           "[data-overflow]"
         );
 
-      if (overflowElement != null) overflowElement.style.display = "none";
-      children.forEach((child) => child.style.removeProperty("display"));
+      // Temporarily hide overflow to measure
+      if (overflowElement) overflowElement.style.display = "none";
+
+      // Reset display for all items
+      children.forEach((el) => el.style.removeProperty("display"));
+
       let amount = 0;
+
       for (let i = children.length - 1; i >= 0; i--) {
-        const child = children[i];
-        if (containerElement.scrollHeight <= containerElement.clientHeight) {
+        if (containerElement.scrollHeight <= containerElement.clientHeight)
           break;
-        }
         amount = children.length - i;
-        overflowElement?.style.removeProperty("display");
+        if (overflowElement) overflowElement.style.removeProperty("display");
       }
+
       setOverflowAmount(amount);
     });
+
     observer.observe(containerRef.current);
+
     return () => observer.disconnect();
   }, [items]);
 
